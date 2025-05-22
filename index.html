@@ -1,74 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Generador de Retos IA</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f9f9f9;
-    color: #222;
-    text-align: center;
-  }
-  #reto {
-    margin-top: 30px;
-    font-size: 1.3em;
-    color: #007acc;
-  }
-  #loading {
-    font-style: italic;
-    color: #666;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generador de Retos IA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+      color: #222;
+      text-align: center;
+    }
+    #reto {
+      margin-top: 30px;
+      font-size: 1.3em;
+      color: #007acc;
+    }
+    #loading {
+      font-style: italic;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
-<h1>Reto Divertido con IA</h1>
-<div id="loading">Generando reto...</div>
-<div id="reto"></div>
+  <h1>Reto Divertido con IA</h1>
+  <div id="loading">Generando reto...</div>
+  <div id="reto"></div>
 
-<script>
-  const API_URL = "https://api-inference.huggingface.co/models/openai-community/gpt2";
-  const API_TOKEN = "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";
+  <script>
+    const API_URL = "https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1";
+    const API_TOKEN = "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";
 
-  async function generarReto() {
-    const prompt = "Dame un reto divertido para un juego tipo verdad o reto:";
-    const requestData = {
-      inputs: prompt,
-      options: { wait_for_model: true }
-    };
+    async function generarReto() {
+      const prompt = "Dame un reto divertido para un juego tipo verdad o reto:";
+      const requestData = {
+        inputs: prompt,
+        options: { wait_for_model: true }
+      };
 
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${API_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestData)
-      });
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${API_TOKEN}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(requestData)
+        });
 
-      if (!response.ok) {
-        throw new Error(`Error en la API: ${response.status} - ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Error en la API: ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const textoGenerado = data[0]?.generated_text || "No se pudo generar el reto.";
+
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("reto").textContent = textoGenerado;
+
+      } catch (error) {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("reto").textContent = error.message;
       }
-
-      const data = await response.json();
-
-      // El resultado está en data[0].generated_text
-      const textoGenerado = data[0]?.generated_text || "No se pudo generar el reto.";
-
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("reto").textContent = textoGenerado;
-
-    } catch (error) {
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("reto").textContent = error.message;
     }
-  }
 
-  // Ejecutar al cargar
-  window.onload = generarReto;
-</script>
+    window.onload = generarReto;
+  </script>
 </body>
 </html>
