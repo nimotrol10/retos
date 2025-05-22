@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Generador de Retos IA</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; margin: 2em; background: #f7f9fc; }
+  button { background-color: #4CAF50; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.2em; cursor: pointer; }
+  button:hover { background-color: #45a049; }
+  #result { margin-top: 2em; font-size: 1.1em; color: #333; min-height: 80px; }
+  #loading { display: none; font-style: italic; color: #777; }
+</style>
+</head>
+<body>
+  <h1>Generador de Retos Divertidos con IA</h1>
+  <button id="generateBtn">Generar Reto</button>
+  <p id="loading">Cargando...</p>
+  <div id="result"></div>
+
+<script>
+const token = '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';
+
+async function generateChallenge() {
+  const resultDiv = document.getElementById('result');
+  const loadingP = document.getElementById('loading');
+  resultDiv.textContent = '';
+  loadingP.style.display = 'block';
+
+  try {
+    const response = await fetch('https://api-inference.huggingface.co/models/gpt2', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ inputs: "Dame un reto divertido para un juego tipo Verdad o Reto" })
+    });
+
+    if (!response.ok) {
+      throw new Error('Error en la API: ' + response.statusText);
+    }
+
+    const data = await response.json();
+
+    if (Array.isArray(data) && data.length > 0 && data[0].generated_text) {
+      resultDiv.textContent = data[0].generated_text;
+    } else {
+      resultDiv.textContent = 'No se pudo obtener un reto válido. Intenta de nuevo.';
+    }
+
+  } catch (error) {
+    resultDiv.textContent = 'Error: ' + error.message;
+  } finally {
+    loadingP.style.display = 'none';
+  }
+}
+
+document.getElementById('generateBtn').addEventListener('click', generateChallenge);
+</script>
+</body>
+</html>
