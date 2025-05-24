@@ -2,46 +2,84 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generador de Retos Divertidos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reto Aleatorio</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 2em;
-      background-color: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      color: #333;
       text-align: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    .dificultad {
+      font-size: 1.1em;
+      color: #777;
+      margin-bottom: 10px;
     }
     .reto {
-      background: white;
-      padding: 2em;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: 0 auto;
-      font-size: 1.2em;
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #e45750;
     }
   </style>
 </head>
 <body>
-  <h1>🎲 Reto Divertido del Día</h1>
-  <div class="reto" id="reto">Generando...</div>
+  <div class="card">
+    <div class="dificultad" id="dificultad">Cargando dificultad...</div>
+    <div class="reto" id="reto">Cargando reto...</div>
+    <button onclick="generarReto()">Nuevo reto</button>
+  </div>
 
   <script>
-    async function generarReto() {
-      const response = await fetch("https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct", {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer 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",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          inputs: "### Instruction:\nGenera un reto divertido para jugar con amigos.\n\n### Input:\n\n### Response:"
-        })
-      });
+    const retos = [
+      { texto: "Baila sin música durante 30 segundos.", dificultad: "Fácil" },
+      { texto: "Habla con acento mexicano durante 1 minuto.", dificultad: "Fácil" },
+      { texto: "Llama a alguien y canta 'Feliz cumpleaños' sin explicar nada.", dificultad: "Media" },
+      { texto: "Actúa como tu animal favorito durante 20 segundos.", dificultad: "Fácil" },
+      { texto: "Imita a un famoso.", dificultad: "Media" },
+      { texto: "Haz una escena dramática de telenovela.", dificultad: "Media" },
+      { texto: "Silba una canción y los demás adivinan.", dificultad: "Fácil" },
+      { texto: "Escribe un mensaje usando solo emojis.", dificultad: "Fácil" },
+      { texto: "Haz una historia de terror en 3 frases.", dificultad: "Difícil" },
+      { texto: "Di el abecedario al revés.", dificultad: "Difícil" },
+      { texto: "Haz equilibrio sobre una pierna por 30 segundos.", dificultad: "Fácil" },
+      { texto: "Haz 10 sentadillas.", dificultad: "Fácil" },
+      { texto: "Encuentra algo rojo en menos de 10 segundos.", dificultad: "Media" },
+      { texto: "Cuenta tu recuerdo más divertido.", dificultad: "Fácil" },
+      { texto: "Di una palabra en otro idioma.", dificultad: "Fácil" }
+    ];
 
-      const data = await response.json();
-      const output = data[0]?.generated_text?.split("### Response:")[1]?.trim() || "No se pudo generar el reto.";
-      document.getElementById("reto").innerText = output;
+    function generarReto() {
+      const indice = Math.floor(Math.random() * retos.length);
+      document.getElementById('reto').textContent = retos[indice].texto;
+      document.getElementById('dificultad').textContent = "Dificultad: " + retos[indice].dificultad;
     }
 
     window.onload = generarReto;
